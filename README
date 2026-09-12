@@ -1,0 +1,6 @@
+#creamos el entorno virtual
+python -m venv venv
+#activamos el entorno virtual
+source "venv/bin/activate"
+#instala los requerimientos
+pip install -r requirements.txt

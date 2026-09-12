@@ -1,0 +1,14 @@
+# Variables de entorno y secretos
+.env
+.env.*
+*.env
+
+# Entorno virtual de Python
+venv/
+.venv/
+env/
+
+# Caché de Python y LangChain
+__pycache__/
+*.py[cod]
+.pytest_cache/.env
