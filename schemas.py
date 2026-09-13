@@ -18,23 +18,17 @@ from pydantic import BaseModel, Field
 
 # 2. MODELOS DE DATOS (ESQUEMAS PYDANTIC)
 #------------------------------------------------------------------------------------------------
-class Reflection(BaseModel):  # Modelo anidado con la crítica del borrador inicial.
-    missing: str = Field(description="Crítica de lo que falta en la respuesta.")  
-    superfluous: str = Field(description="Qué sobra o es irrelevante")
+class Reflection(BaseModel):
+    missing: str = Field(default="", description="Información faltante")
+    superfluous: str = Field(default="", description="Información superflua o innecesaria")
 
+class AnswerQuestion(BaseModel):
+    answer: str = Field(description="Respuesta principal redactada")
+    reflection: Reflection = Field(default_factory=Reflection, description="Crítica de la respuesta")
+    search_queries: List[str] = Field(default_factory=list, description="Consultas de búsqueda recomendadas")
 
-class AnswerQuestion(BaseModel):  # Esquema principal: respuesta + reflexión + queries de mejora.
-    """Responde a la pregunta."""  # Docstring que se expone al LLM como intención del tool schema.
-
-    answer: str = Field(description="Respuesta detallada a la pregunta (unas 300 palabras).") 
-    reflection: Reflection = Field(description="Tu reflexión sobre la respuesta inicial.") # Con los campos de la clase anterior Reflection.
-    search_queries: List[str] = Field(  # Lista de consultas que luego ejecutará Tavily.
-        description="Entre 1 y 3 consultas de búsqueda para investigar mejoras que respondan a la crítica a tu respuesta actual."  # Guía para el LLM: 1–3 queries.
-    ) 
-
-class ReviseAnswer(AnswerQuestion):  # Hereda y extiende AnswerQuestion para la fase de revisión.
-    """Revisa tu respuesta original a la pregunta."""  
-
-    references: List[str] = Field(  # Lista de URLs o citas que justifican cambios en la respuesta.
-        description="Referencias que motivan tu respuesta revisada."  
-    ) 
+class ReviseAnswer(BaseModel):
+    answer: str = Field(description="Respuesta revisada y mejorada")
+    reflection: Reflection = Field(default_factory=Reflection, description="Crítica de la revisión")
+    search_queries: List[str] = Field(default_factory=list, description="Nuevas consultas de búsqueda")
+    references: List[str] = Field(default_factory=list, description="Lista de URLs de referencias")
