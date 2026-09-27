@@ -19,16 +19,15 @@ from pydantic import BaseModel, Field
 # 2. MODELOS DE DATOS (ESQUEMAS PYDANTIC)
 #------------------------------------------------------------------------------------------------
 class Reflection(BaseModel):
-    missing: str = Field(default="", description="Información faltante")
-    superfluous: str = Field(default="", description="Información superflua o innecesaria")
+    missing: str = Field(default="", description="Critica de lo que falta en la respuesta")
+    superfluous: str = Field(default="", description="Que sobra o es irrelevante")
 
 class AnswerQuestion(BaseModel):
-    answer: str = Field(description="Respuesta principal redactada")
-    reflection: Reflection = Field(default_factory=Reflection, description="Crítica de la respuesta")
-    search_queries: List[str] = Field(default_factory=list, description="Consultas de búsqueda recomendadas")
+    """Responde a la pregunta"""
+    answer: str = Field(description="Respuesta detallada a la pregunta (unas 300 palabras).")
+    reflection: Reflection = Field(default_factory=Reflection, description="Tu reflexion sobre la respuesta inicial")
+    search_queries: List[str] = Field(default_factory=list, description="Entre 1 y 3 consultas de busqueda para investigar mjoras que respondan a la critica a tu respuesta actual.")
 
-class ReviseAnswer(BaseModel):
-    answer: str = Field(description="Respuesta revisada y mejorada")
-    reflection: Reflection = Field(default_factory=Reflection, description="Crítica de la revisión")
-    search_queries: List[str] = Field(default_factory=list, description="Nuevas consultas de búsqueda")
-    references: List[str] = Field(default_factory=list, description="Lista de URLs de referencias")
+class ReviseAnswer(AnswerQuestion):
+    """Revisa tu respuesta original a la pregunta."""
+    references: List[str] = Field(default_factory=list, description="Referencias que motivan tu respuesta revisada.")
